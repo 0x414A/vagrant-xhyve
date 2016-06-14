@@ -27,6 +27,7 @@ The plugin is in a very early state and should not be used for anything except t
 $ brew install xhyve
 $ git clone https://github.com/sirn/vagrant-xhyve.git
 $ cd vagrant-xhyve/
+$ gem install bundler -v 1.10.6
 $ bundle install
 $ rake compile
 ```
@@ -95,7 +96,9 @@ After a box is created, you can now start Xhyve VM with a standard Vagrantfile a
 ```ruby
 Vagrant.configure("2") do |config|
   config.vm.guest = :freebsd
-  config.vm.box = "test"
+  config.vm.provider "xhyve" do |x,override|
+    override.vm.box = "mfsbsd"
+  end
 end
 ```
 
