@@ -53,24 +53,30 @@ Available configurations for the provider are:
 * `acpi`: create ACPI table, e.g. `true`
 * `pcis`: an array containing PCI slot configuration:
 
-For example, follow the below instruction to create a mfsBSD box. Note that you should be using `vagrant` executable installed by `vagrant-xhyve` in the "Installation" section. The executable will be located in `bin/` directory.
+For example, follow the below instruction to create a mfsBSD box. Note that you should be using `vagrant` executable installed by `vagrant-xhyve` in the "Installation" section. The executable will be located in `bin/` directory. 
 
-1. Create a `Vagrantfile` with the following contents:
+1. Create folder in which to put the files you'll create in subsequent steps:
+
+``` shell
+mkdir examplebox
+```
+
+2. Create a `Vagrantfile` with the following contents:
 
     ```ruby
     Vagrant.configure("2") do |config|
       config.vm.guest = :freebsd
-      config.vm.box = "test"
+      config.vm.box = "testbox"
 
       config.vm.provider :xhyve do |v|
-        v.firmware = %q(fbsd,userboot.so,mfsbsd-10.2-RELEASE-amd64.iso,"")
+        v.firmware = %q(fbsd,userboot.so,mfsbsd-10.3-RELEASE-amd64.iso,"")
         v.memory = "1G"
         v.cpus = "2"
         v.lpc = "com1,stdio"
         v.acpi = true
         v.pcis = [
           "2:0,virtio-net",
-          "3,ahci-cd,mfsbsd-10.2-RELEASE-amd64.iso",
+          "3,ahci-cd,mfsbsd-10.3-RELEASE-amd64.iso",
           "0:0,hostbridge",
           "31,lpc",
         ]
@@ -78,16 +84,16 @@ For example, follow the below instruction to create a mfsBSD box. Note that you 
     end
     ```
 
-2. Create `metadata.json` with the following contents in the same directory as Vagrantfile:
+3. Create `metadata.json` with the following contents in the same directory as Vagrantfile:
 
     ```ruby
     {"provider":"xhyve"}
     ```
 
-3. Place [mfsbsd-10.2-RELEASE-amd64.iso](http://mfsbsd.vx.sk/) in the same directory as Vagrantfile.
-4. Place [userboot.so](https://github.com/mist64/xhyve/tree/master/test) in the same directory as Vagrantfile.
-5. Run `tar cvzf test.box *` to create a box.
-6. `bin/vagrant box add test.box`
+4. Place [mfsbsd-10.3-RELEASE-amd64.iso](http://mfsbsd.vx.sk/) in the same directory as Vagrantfile.
+5. Place [userboot.so](https://github.com/mist64/xhyve/tree/master/test) in the same directory as Vagrantfile.
+6. `cd` to the directory you put the above files (e.g. `cd examplebox`), then run `tar cvzf test.box *` to create a box.
+7. `bin/vagrant box add --name test test.box`
 
 ### Running
 
@@ -97,7 +103,7 @@ After a box is created, you can now start Xhyve VM with a standard Vagrantfile a
 Vagrant.configure("2") do |config|
   config.vm.guest = :freebsd
   config.vm.provider "xhyve" do |x,override|
-    override.vm.box = "mfsbsd"
+    override.vm.box = "test"
   end
 end
 ```
